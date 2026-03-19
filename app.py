@@ -40,17 +40,25 @@ st.caption("Upload a CSV log file → filter noise → visualize durations")
 # File upload
 # ---------------------------------------------------------------------------
 
+MAX_UPLOAD_SIZE_MB = 50
+
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
 if uploaded_file is None:
     st.info("Please upload a CSV file to get started.")
     st.stop()
 
+# Validate file size before processing
+file_size_mb = uploaded_file.size / (1024 * 1024)
+if file_size_mb > MAX_UPLOAD_SIZE_MB:
+    st.error(f"File too large ({file_size_mb:.1f} MB). Maximum allowed size is {MAX_UPLOAD_SIZE_MB} MB.")
+    st.stop()
+
 # Read CSV
 try:
     raw_df = pd.read_csv(uploaded_file)
-except Exception as exc:
-    st.error(f"Failed to read CSV: {exc}")
+except Exception:
+    st.error("Failed to read the uploaded file. Please ensure it is a valid CSV.")
     st.stop()
 
 if raw_df.empty:

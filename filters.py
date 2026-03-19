@@ -12,6 +12,22 @@ import re
 
 import pandas as pd
 
+# Maximum allowed length for user-supplied regex patterns (ReDoS mitigation)
+MAX_REGEX_LENGTH = 500
+
+
+def _safe_compile_regex(pattern: str) -> re.Pattern | None:
+    """Compile a regex pattern with safety checks against ReDoS.
+
+    Returns the compiled pattern, or None if the pattern is rejected.
+    """
+    if len(pattern) > MAX_REGEX_LENGTH:
+        return None
+    try:
+        return re.compile(pattern)
+    except re.error:
+        return None
+
 
 def apply_filters(
     events: pd.DataFrame,
@@ -27,6 +43,7 @@ def apply_filters(
     events : DataFrame with at least 'message' column.
     exclude_substrings : list of substrings — if message contains any, exclude.
     exclude_regexes : list of regex patterns — if any matches message, exclude.
+                      Patterns longer than MAX_REGEX_LENGTH are rejected.
     min_raw_duration_ms : hide events whose raw duration is below this threshold.
     raw_durations_ms : Series aligned with events, holding raw duration in ms.
                        Required when min_raw_duration_ms > 0.
@@ -44,12 +61,9 @@ def apply_filters(
         for pattern in exclude_regexes:
             pattern = pattern.strip()
             if pattern:
-                try:
-                    compiled = re.compile(pattern)
+                compiled = _safe_compile_regex(pattern)
+                if compiled is not None:
                     mask &= ~events["message"].str.contains(compiled)
-                except re.error:
-                    # Skip invalid regex patterns silently
-                    pass
 
     # Raw-duration threshold filter
     if min_raw_duration_ms > 0 and raw_durations_ms is not None:
