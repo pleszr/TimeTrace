@@ -1,0 +1,128 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.3, pytest-9.0.2, pluggy-1.6.0 -- /opt/homebrew/opt/python@3.13/bin/python3.13
+cachedir: .pytest_cache
+rootdir: /Users/pleszroland/git/TimeTrace/runs/swarm-2026-03-19T19-59-35-292Z/worktrees/step-3
+configfile: pyproject.toml
+plugins: cov-7.0.0
+collecting ... collected 88 items
+
+tests/test_filters.py::TestSafeCompileRegex::test_valid_pattern PASSED   [  1%]
+tests/test_filters.py::TestSafeCompileRegex::test_invalid_pattern_returns_none PASSED [  2%]
+tests/test_filters.py::TestSafeCompileRegex::test_empty_pattern PASSED   [  3%]
+tests/test_filters.py::TestSafeCompileRegex::test_pattern_too_long_returns_none PASSED [  4%]
+tests/test_filters.py::TestSafeCompileRegex::test_pattern_at_max_length PASSED [  5%]
+tests/test_filters.py::TestSafeCompileRegex::test_complex_valid_pattern PASSED [  6%]
+tests/test_filters.py::TestSubstringFilters::test_no_filters_returns_all PASSED [  7%]
+tests/test_filters.py::TestSubstringFilters::test_single_substring_excludes_matching PASSED [  9%]
+tests/test_filters.py::TestSubstringFilters::test_substring_case_insensitive PASSED [ 10%]
+tests/test_filters.py::TestSubstringFilters::test_multiple_substrings PASSED [ 11%]
+tests/test_filters.py::TestSubstringFilters::test_empty_substring_ignored PASSED [ 12%]
+tests/test_filters.py::TestSubstringFilters::test_none_substrings PASSED [ 13%]
+tests/test_filters.py::TestSubstringFilters::test_all_filtered_out PASSED [ 14%]
+tests/test_filters.py::TestSubstringFilters::test_substring_partial_match PASSED [ 15%]
+tests/test_filters.py::TestRegexFilters::test_single_regex PASSED        [ 17%]
+tests/test_filters.py::TestRegexFilters::test_invalid_regex_silently_ignored PASSED [ 18%]
+tests/test_filters.py::TestRegexFilters::test_too_long_regex_ignored PASSED [ 19%]
+tests/test_filters.py::TestRegexFilters::test_multiple_regexes PASSED    [ 20%]
+tests/test_filters.py::TestRegexFilters::test_none_regexes PASSED        [ 21%]
+tests/test_filters.py::TestRegexFilters::test_empty_regex_string_ignored PASSED [ 22%]
+tests/test_filters.py::TestRegexFilters::test_regex_with_whitespace_stripped PASSED [ 23%]
+tests/test_filters.py::TestDurationFilters::test_no_threshold PASSED     [ 25%]
+tests/test_filters.py::TestDurationFilters::test_threshold_filters_short_events PASSED [ 26%]
+tests/test_filters.py::TestDurationFilters::test_threshold_keeps_nan_duration PASSED [ 27%]
+tests/test_filters.py::TestDurationFilters::test_threshold_exact_boundary PASSED [ 28%]
+tests/test_filters.py::TestDurationFilters::test_threshold_without_durations_series PASSED [ 29%]
+tests/test_filters.py::TestCombinedFilters::test_substring_and_regex_combined PASSED [ 30%]
+tests/test_filters.py::TestCombinedFilters::test_all_three_filters_combined PASSED [ 31%]
+tests/test_filters.py::TestCombinedFilters::test_returns_copy_not_view PASSED [ 32%]
+tests/test_integration.py::TestFullPipeline::test_csv_to_timeline_full_pipeline PASSED [ 34%]
+tests/test_integration.py::TestFullPipeline::test_pipeline_with_duration_filter PASSED [ 35%]
+tests/test_integration.py::TestFullPipeline::test_pipeline_all_events_filtered PASSED [ 36%]
+tests/test_integration.py::TestFullPipeline::test_pipeline_with_combined_filters PASSED [ 37%]
+tests/test_integration.py::TestFullPipeline::test_pipeline_with_sample_csv_file PASSED [ 38%]
+tests/test_integration.py::TestFullPipeline::test_pipeline_preserves_extra_columns PASSED [ 39%]
+tests/test_integration.py::TestStreamlitHTTP::test_streamlit_app_serves_health_endpoint PASSED [ 40%]
+tests/test_integration.py::TestStreamlitHTTP::test_streamlit_app_serves_main_page PASSED [ 42%]
+tests/test_parsing.py::TestDetectColumns::test_exact_column_names PASSED [ 43%]
+tests/test_parsing.py::TestDetectColumns::test_case_insensitive_uppercase PASSED [ 44%]
+tests/test_parsing.py::TestDetectColumns::test_case_insensitive_mixed_case PASSED [ 45%]
+tests/test_parsing.py::TestDetectColumns::test_columns_with_whitespace PASSED [ 46%]
+tests/test_parsing.py::TestDetectColumns::test_missing_timestamp_column PASSED [ 47%]
+tests/test_parsing.py::TestDetectColumns::test_missing_message_column PASSED [ 48%]
+tests/test_parsing.py::TestDetectColumns::test_missing_both_columns PASSED [ 50%]
+tests/test_parsing.py::TestDetectColumns::test_extra_columns_ignored PASSED [ 51%]
+tests/test_parsing.py::TestDetectColumns::test_empty_dataframe_with_correct_columns PASSED [ 52%]
+tests/test_parsing.py::TestDetectColumns::test_empty_dataframe_missing_columns PASSED [ 53%]
+tests/test_parsing.py::TestParseCsv::test_basic_parsing PASSED           [ 54%]
+tests/test_parsing.py::TestParseCsv::test_output_columns PASSED          [ 55%]
+tests/test_parsing.py::TestParseCsv::test_events_sorted_by_timestamp PASSED [ 56%]
+tests/test_parsing.py::TestParseCsv::test_invalid_timestamps_skipped PASSED [ 57%]
+tests/test_parsing.py::TestParseCsv::test_empty_messages_skipped PASSED  [ 59%]
+tests/test_parsing.py::TestParseCsv::test_nan_messages_skipped PASSED    [ 60%]
+tests/test_parsing.py::TestParseCsv::test_preserves_original_row_index PASSED [ 61%]
+tests/test_parsing.py::TestParseCsv::test_preserves_extra_columns PASSED [ 62%]
+tests/test_parsing.py::TestParseCsv::test_single_row PASSED              [ 63%]
+tests/test_parsing.py::TestParseCsv::test_all_rows_invalid PASSED        [ 64%]
+tests/test_parsing.py::TestParseCsv::test_does_not_mutate_input PASSED   [ 65%]
+tests/test_parsing.py::TestParseCsv::test_whitespace_messages_trimmed PASSED [ 67%]
+tests/test_parsing.py::TestParseCsv::test_case_insensitive_columns PASSED [ 68%]
+tests/test_parsing.py::TestParseCsv::test_mixed_valid_and_invalid_rows PASSED [ 69%]
+tests/test_timeline.py::TestComputeDurations::test_basic_durations PASSED [ 70%]
+tests/test_timeline.py::TestComputeDurations::test_single_event_nan PASSED [ 71%]
+tests/test_timeline.py::TestComputeDurations::test_two_events PASSED     [ 72%]
+tests/test_timeline.py::TestComputeDurations::test_equal_timestamps_zero_duration PASSED [ 73%]
+tests/test_timeline.py::TestComputeDurations::test_sub_millisecond_precision PASSED [ 75%]
+tests/test_timeline.py::TestBuildTimelineData::test_basic_timeline_data PASSED [ 76%]
+tests/test_timeline.py::TestBuildTimelineData::test_raw_duration_from_full_set PASSED [ 77%]
+tests/test_timeline.py::TestBuildTimelineData::test_effective_duration_from_filtered_set PASSED [ 78%]
+tests/test_timeline.py::TestBuildTimelineData::test_single_event_timeline PASSED [ 79%]
+tests/test_timeline.py::TestBuildTimelineData::test_empty_filtered_returns_empty PASSED [ 80%]
+tests/test_timeline.py::TestBuildChart::test_returns_plotly_figure PASSED [ 81%]
+tests/test_timeline.py::TestBuildChart::test_figure_has_bar_trace PASSED [ 82%]
+tests/test_timeline.py::TestBuildChart::test_figure_horizontal_orientation PASSED [ 84%]
+tests/test_timeline.py::TestBuildChart::test_figure_labels_are_numbered PASSED [ 85%]
+tests/test_timeline.py::TestBuildChart::test_figure_labels_truncated_at_80_chars PASSED [ 86%]
+tests/test_timeline.py::TestBuildChart::test_empty_timeline_returns_figure PASSED [ 87%]
+tests/test_timeline.py::TestBuildChart::test_chart_axes_titles PASSED    [ 88%]
+tests/test_timeline.py::TestBuildChart::test_chart_title PASSED          [ 89%]
+tests/test_timeline.py::TestBuildChart::test_last_event_gets_minimal_width PASSED [ 90%]
+tests/test_timeline.py::TestBuildChart::test_chart_reversed_y_axis PASSED [ 92%]
+tests/test_timeline.py::TestBuildChart::test_hover_text_present PASSED   [ 93%]
+tests/test_timeline.py::TestFmtDur::test_normal_value PASSED             [ 94%]
+tests/test_timeline.py::TestFmtDur::test_zero PASSED                     [ 95%]
+tests/test_timeline.py::TestFmtDur::test_nan_value PASSED                [ 96%]
+tests/test_timeline.py::TestFmtDur::test_none_value PASSED               [ 97%]
+tests/test_timeline.py::TestFmtDur::test_large_value PASSED              [ 98%]
+tests/test_timeline.py::TestFmtDur::test_small_value PASSED              [100%]
+
+=============================== warnings summary ===============================
+tests/test_filters.py::TestCombinedFilters::test_returns_copy_not_view
+  /Users/pleszroland/git/TimeTrace/runs/swarm-2026-03-19T19-59-35-292Z/worktrees/step-3/tests/test_filters.py:272: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+  You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+  A typical example is when you are setting values in a column of a DataFrame, like:
+  
+  df["col"][row_indexer] = value
+  
+  Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+  
+  See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  
+    result["message"].iloc[0] = "modified"
+
+tests/test_parsing.py::TestParseCsv::test_all_rows_invalid
+  /Users/pleszroland/git/TimeTrace/runs/swarm-2026-03-19T19-59-35-292Z/worktrees/step-3/parsing.py:56: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+    df["_parsed_ts"] = pd.to_datetime(df[ts_col], errors="coerce", utc=True)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.13.3-final-0 _______________
+
+Name          Stmts   Miss  Cover   Missing
+-------------------------------------------
+filters.py       28      0   100%
+parsing.py       30      0   100%
+timeline.py      45      0   100%
+-------------------------------------------
+TOTAL           103      0   100%
+Required test coverage of 80.0% reached. Total coverage: 100.00%
+======================== 88 passed, 2 warnings in 1.97s ========================
