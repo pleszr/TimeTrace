@@ -1,3 +1,9 @@
+[project]
+name = "timetrace"
+version = "1.0.0"
+description = "Lightweight Streamlit app to visualize time spent from log data entries"
+requires-python = ">=3.9"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
