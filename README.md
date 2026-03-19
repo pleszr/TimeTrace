@@ -49,6 +49,15 @@ The only required columns are:
 | `filters.py`   | Substring, regex, and duration filtering     |
 | `timeline.py`  | Duration calculation and Plotly chart builder |
 
+## Testing
+
+```bash
+pip install pytest pytest-cov
+python -m pytest tests/ --cov=parsing --cov=filters --cov=timeline
+```
+
+All 88 tests pass with 100% coverage across `parsing.py`, `filters.py`, and `timeline.py`.
+
 ## Assumptions
 
 - Timestamps should be parseable by pandas (ISO 8601 like `2026-03-19T15:24:17.539Z` works best).
@@ -56,3 +65,14 @@ The only required columns are:
 - Duration of an event = time to the next *kept* event's timestamp.
 - The last event in a sequence has no measurable duration (shown as open-ended).
 - Filtering is applied before effective duration calculation.
+
+## Common Issues
+
+| Problem | Solution |
+|---------|----------|
+| "Missing required columns" error | Ensure your CSV has `timestamp` and `message` columns (case-insensitive). |
+| All rows skipped after parsing | Check that timestamps are in a format pandas can parse (ISO 8601 recommended). |
+| File too large error | The upload limit is 50 MB. Split large files or pre-filter before uploading. |
+| Regex filter has no effect | Patterns longer than 500 characters are silently rejected (ReDoS protection). Invalid regex syntax is also ignored. |
+| Timeline shows no bars | All events were filtered out — try resetting filters with the 🔄 button in the sidebar. |
+| Duration column shows "—" | The last event in a sequence has no next event, so its duration is undefined. |
