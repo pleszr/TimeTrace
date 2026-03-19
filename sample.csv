@@ -1,0 +1,13 @@
+timestamp,message,source
+2026-03-19T15:24:17.000Z,Application started,system
+2026-03-19T15:24:17.100Z,Loading configuration,system
+2026-03-19T15:24:17.150Z,"Service call to ApplicationService.getApplication(..) took ms: 0",trace
+2026-03-19T15:24:17.200Z,Configuration loaded successfully,system
+2026-03-19T15:24:17.250Z,"Service call to UserService.getUser(..) took ms: 0",trace
+2026-03-19T15:24:17.539Z,Connecting to database,db
+2026-03-19T15:24:18.039Z,Database connection established,db
+2026-03-19T15:24:18.100Z,Running migrations,db
+2026-03-19T15:24:18.150Z,"Service call to MigrationService.run(..) took ms: 0",trace
+2026-03-19T15:24:19.100Z,Migrations complete,db
+2026-03-19T15:24:19.200Z,Starting HTTP server on port 8080,system
+2026-03-19T15:24:19.250Z,Server ready,system
