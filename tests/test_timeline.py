@@ -15,7 +15,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import pytest
 
-from timeline import _fmt_dur, build_chart, build_timeline_data, compute_durations_ms
+from timeline import _fmt_dur, _fmt_pct, _wrap_text, build_chart, build_timeline_data, compute_durations_ms
 
 
 # ===================================================================
@@ -257,7 +257,56 @@ class TestBuildChart:
         for text in hover_texts:
             assert "Timestamp:" in text
             assert "Effective duration:" in text
+            assert "Percentage of total:" in text
             assert "Raw duration:" in text
+
+    def test_hover_text_percentage_values(self):
+        timeline = self._make_timeline(3)
+        fig = build_chart(timeline)
+        hover_texts = fig.data[0].hovertext
+        # First two events each have 100ms effective duration
+        assert "50.00%" in hover_texts[0]
+        assert "50.00%" in hover_texts[1]
+        # Last event gets NaN → "— (last event)"
+        assert "— (last event)" in hover_texts[2]
+
+    def test_hover_text_wraps_long_message(self):
+        long_msg = "A" * 200
+        timeline = pd.DataFrame(
+            {
+                "timestamp": pd.to_datetime(["2026-03-19T15:24:17.000Z"]),
+                "message": [long_msg],
+                "raw_duration_ms": [float("nan")],
+                "effective_duration_ms": [float("nan")],
+            }
+        )
+        fig = build_chart(timeline)
+        hover_text = fig.data[0].hovertext[0]
+        # Long message should be split with <br> inside the bold tag
+        assert "<br>" in hover_text.split("</b>")[0]
+
+    def test_hover_uses_full_message_when_present(self):
+        timeline = pd.DataFrame(
+            {
+                "timestamp": pd.to_datetime(
+                    ["2026-03-19T15:24:17.000Z", "2026-03-19T15:24:18.000Z"]
+                ),
+                "message": ["Truncated msg", "Short"],
+                "raw_full_message": ["The complete full message text", "Short"],
+                "raw_duration_ms": [1000.0, float("nan")],
+                "effective_duration_ms": [1000.0, float("nan")],
+            }
+        )
+        fig = build_chart(timeline)
+        hover_text = fig.data[0].hovertext[0]
+        assert "The complete full message text" in hover_text
+        assert "Truncated msg" not in hover_text
+
+    def test_hover_falls_back_to_message_without_full_message(self):
+        timeline = self._make_timeline()
+        fig = build_chart(timeline)
+        hover_text = fig.data[0].hovertext[0]
+        assert "Event 0" in hover_text
 
 
 # ===================================================================
@@ -286,3 +335,80 @@ class TestFmtDur:
 
     def test_small_value(self):
         assert _fmt_dur(0.001) == "0.00 ms"
+
+
+# ===================================================================
+# _fmt_pct
+# ===================================================================
+
+
+class TestFmtPct:
+    """Tests for the _fmt_pct helper."""
+
+    def test_normal_value(self):
+        assert _fmt_pct(250, 1000) == "25.00%"
+
+    def test_zero_total(self):
+        assert _fmt_pct(100, 0) == "— (last event)"
+
+    def test_nan_value(self):
+        assert _fmt_pct(float("nan"), 1000) == "— (last event)"
+
+    def test_full_percentage(self):
+        assert _fmt_pct(500, 500) == "100.00%"
+
+    def test_small_percentage(self):
+        assert _fmt_pct(1, 10000) == "0.01%"
+
+
+# ===================================================================
+# _wrap_text
+# ===================================================================
+
+
+class TestWrapText:
+    """Tests for the _wrap_text helper."""
+
+    def test_short_text_unchanged(self):
+        assert _wrap_text("hello world") == "hello world"
+
+    def test_text_at_boundary_unchanged(self):
+        text = "a" * 80
+        assert _wrap_text(text) == text
+
+    def test_long_text_wrapped(self):
+        text = "word " * 30  # 150 chars
+        result = _wrap_text(text.strip())
+        assert "<br>" in result
+
+    def test_no_spaces_hard_break(self):
+        text = "a" * 200
+        result = _wrap_text(text)
+        assert "<br>" in result
+        # First segment should be exactly 80 chars (default width)
+        assert len(result.split("<br>")[0]) == 80
+
+    def test_embedded_newlines_converted(self):
+        text = "line one\nline two\nline three"
+        result = _wrap_text(text)
+        assert result == "line one<br>line two<br>line three"
+
+    def test_tabs_converted_to_spaces(self):
+        text = "key:\tvalue"
+        result = _wrap_text(text)
+        assert "\t" not in result
+        assert "key:    value" == result
+
+    def test_multiline_long_lines_wrapped(self):
+        text = "short line\n" + "x " * 60  # second line is 120 chars
+        result = _wrap_text(text)
+        lines = result.split("<br>")
+        assert lines[0] == "short line"
+        assert len(lines) >= 3  # short + wrapped parts
+
+    def test_truncation_at_max_lines(self):
+        text = "\n".join(f"line {i}" for i in range(30))
+        result = _wrap_text(text, max_lines=5)
+        lines = result.split("<br>")
+        assert len(lines) == 6  # 5 lines + "…"
+        assert lines[-1] == "…"

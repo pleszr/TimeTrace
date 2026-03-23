@@ -71,20 +71,24 @@ def build_chart(timeline: pd.DataFrame) -> go.Figure:
     labels = [f"{i + 1}. {lbl}" for i, lbl in enumerate(labels)]
 
     # Build hover text
+    has_full_message = "raw_full_message" in timeline.columns
+    total_effective_ms = timeline["effective_duration_ms"].sum()
     hover_texts = []
     for _, row in timeline.iterrows():
         ts_str = str(row["timestamp"])
         eff = row["effective_duration_ms"]
         raw = row.get("raw_duration_ms")
+        hover_msg = str(row["raw_full_message"]) if has_full_message else row["message"]
         parts = [
-            f"<b>{row['message']}</b>",
+            f"<b>{_wrap_text(hover_msg)}</b>",
             f"Timestamp: {ts_str}",
             f"Effective duration: {_fmt_dur(eff)}",
+            f"Percentage of total: {_fmt_pct(eff, total_effective_ms)}",
             f"Raw duration: {_fmt_dur(raw)}",
         ]
         # Include any raw_ columns for debugging
         for col in timeline.columns:
-            if col.startswith("raw_") and col not in ("raw_duration_ms",):
+            if col.startswith("raw_") and col not in ("raw_duration_ms", "raw_full_message"):
                 parts.append(f"{col}: {row[col]}")
         hover_texts.append("<br>".join(parts))
 
@@ -113,8 +117,46 @@ def build_chart(timeline: pd.DataFrame) -> go.Figure:
     return fig
 
 
+def _wrap_text(text: str, width: int = 80, max_lines: int = 15) -> str:
+    """Wrap long text for display in an HTML hover label.
+
+    Handles embedded newlines and tabs, wraps long lines at word
+    boundaries, and truncates if the result exceeds *max_lines*.
+    """
+    # Normalise whitespace characters to HTML-friendly equivalents
+    text = text.replace("\t", "    ").replace("\r\n", "\n").replace("\r", "\n")
+
+    output_lines: list[str] = []
+    for segment in text.split("\n"):
+        if len(segment) <= width:
+            output_lines.append(segment)
+        else:
+            remaining = segment
+            while len(remaining) > width:
+                break_at = remaining.rfind(" ", 0, width)
+                if break_at == -1:
+                    break_at = width
+                output_lines.append(remaining[:break_at])
+                remaining = remaining[break_at:].lstrip()
+            if remaining:
+                output_lines.append(remaining)
+
+    if len(output_lines) > max_lines:
+        output_lines = output_lines[:max_lines]
+        output_lines.append("…")
+
+    return "<br>".join(output_lines)
+
+
 def _fmt_dur(value) -> str:
     """Format a duration value for display."""
     if pd.isna(value):
         return "— (last event)"
     return f"{value:,.2f} ms"
+
+
+def _fmt_pct(value, total) -> str:
+    """Format a duration as a percentage of total time."""
+    if pd.isna(value) or total == 0:
+        return "— (last event)"
+    return f"{value / total * 100:.2f}%"
